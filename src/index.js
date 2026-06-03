@@ -1,10 +1,14 @@
 const express = require('express'); // importa Express para crear el servidor
 const dotenv = require('dotenv'); // importa dotenv para leer el .env
+const asistenciasRoutes = require('./routes/asistencias'); // importa las rutas de asistencias
 
 dotenv.config(); // carga las variables de entorno del .env
 
 const app = express(); // crea la app de Express
 app.use(express.json()); // permite recibir JSON en las peticiones
+
+// registra las rutas de asistencias
+app.use('/api/asistencias', asistenciasRoutes); 
 
 // ruta simple para comprobar que el servicio está activo
 app.get('/health', (req, res) => {
