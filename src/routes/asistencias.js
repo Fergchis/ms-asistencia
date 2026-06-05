@@ -73,6 +73,14 @@ router.put('/:id', async (req, res) => {
       });
     }
 
+    // Regla de negocio: Solo se puede modificar la asistencia mientras no termine el día
+    const hoy = new Date().toISOString().split('T')[0]; //se obtiene solo la primera parte de la fecha [0]
+    if (asistencia.fecha !== hoy) {
+      return res.status(403).json({
+        error: 'No se puede modificar una asistencia de un día pasado'
+      });
+    }
+
     await asistencia.update(datos); // actualiza registro con los datos nuevos
 
     res.json(asistencia); // responde con registro actualizado
