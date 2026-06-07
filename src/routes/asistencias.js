@@ -1,12 +1,12 @@
 const express = require('express'); // importa Express para manejar rutas
-const Asistencia = require('../models/Asistencia'); // importa el modelo Asistencia
 const router = express.Router(); // crea el router de asistencias
+const asistenciaRepository = require('../repositories/asistencia.repository'); // importa repository de asistencia
 const asistenciaSchema = require('../validations/asistencia.validation'); // importa validación
 
 // lista todas las asistencias
 router.get('/', async (req, res) => {
   try {
-    const asistencias = await Asistencia.findAll(); // obtiene los registros
+    const asistencias = await asistenciaRepository.obtenerAsistencias(); // obtiene los registros
 
     res.json(asistencias); // responde con la lista de asistencias
   } catch (error) {
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 // busca asistencia por id
 router.get('/:id', async (req, res) => {
   try {
-    const asistencia = await Asistencia.findByPk(req.params.id); // busca por id
+    const asistencia = await asistenciaRepository.obtenerAsistenciaPorId(req.params.id); // busca por id
 
     if (!asistencia) {
       return res.status(404).json({
@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
   try {
     const datos = asistenciaSchema.parse(req.body); // valida el body recibido
 
-    const asistencia = await Asistencia.create(datos); // crea el registro en la BD
+    const asistencia = await asistenciaRepository.crearAsistencia(datos); // crea el registro en la BD
 
     res.status(201).json(asistencia); // responde con el registro creado
   } catch (error) {
@@ -57,7 +57,7 @@ router.put('/:id', async (req, res) => {
   try {
     const datos = asistenciaSchema.parse(req.body); // valida el body recibido
 
-    const asistencia = await Asistencia.findByPk(req.params.id); // busca registro por id
+    const asistencia = await asistenciaRepository.obtenerAsistenciaPorId(req.params.id); // busca registro por id
 
     if (!asistencia) {
       return res.status(404).json({
@@ -73,7 +73,7 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    await asistencia.update(datos); // actualiza registro con los datos nuevos
+    await asistenciaRepository.actualizarAsistencia(asistencia, datos); // actualiza registro con los datos nuevos
 
     res.json(asistencia); // responde con registro actualizado
   } catch (error) {
