@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS justificativos (
+  id SERIAL PRIMARY KEY,
+  "asistenciaId" INTEGER NOT NULL,
+  motivo VARCHAR(100) NOT NULL,
+  descripcion TEXT NOT NULL,
+  "urlArchivo" TEXT,
+  "fechaCarga" DATE NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
