@@ -10,13 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "11.5.0",
-      "onFail": "download"
-    }
-  },
+  "packageManager": "pnpm@11.5.0",
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
