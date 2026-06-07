@@ -1,15 +1,7 @@
 const express = require('express'); // importa Express para manejar rutas
-const { z } = require('zod'); // importa zod para validar datos
 const Asistencia = require('../models/Asistencia'); // importa el modelo Asistencia
 const router = express.Router(); // crea el router de asistencias
-
-// define las reglas de validación para asistencia
-const asistenciaSchema = z.object({
-  alumnoId: z.number(), // valida que alumnoId sea número
-  cargaAcademicaId: z.number(), // valida que cargaAcademicaId sea número
-  fecha: z.string(), // valida que fecha sea texto
-  estado: z.enum(['PRESENTE', 'AUSENTE', 'JUSTIFICADO']) // limita los estados permitidos
-});
+const asistenciaSchema = require('../validations/asistencia.validation'); // importa validación
 
 // lista todas las asistencias
 router.get('/', async (req, res) => {
