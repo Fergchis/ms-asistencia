@@ -1,19 +1,12 @@
 const express = require('express');
-const controller = require('../controllers/mensaje.controller');
+const mensajeController = require('../controllers/mensaje.controller');
 
 const router = express.Router();
 
-// rutas get
-router.get('/', controller.obtenerMensajes);
-router.get('/:id', controller.obtenerMensajePorId);
-
-// rutas post
-router.post('/', controller.crearMensaje);
-
-// rutas put
-router.put('/:id', controller.actualizarMensaje);
-
-// rutas delete
-router.delete('/:id', controller.eliminarMensaje);
+router.get('/', mensajeController.obtenerMensajes);
+router.get('/:id', mensajeController.obtenerMensajePorId);
+router.post('/', mensajeController.crearMensaje);
+router.put('/:id', mensajeController.actualizarMensaje);
+router.delete('/:id', mensajeController.eliminarMensaje);
 
 module.exports = router;
