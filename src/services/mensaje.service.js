@@ -1,44 +1,50 @@
-const repository = require('../repositories/mensaje.repository');
+const mensajeRepository = require('../repositories/mensaje.repository');
+const emailService = require('./email.service');
 
-// obtiene todos los mensajes
 const obtenerMensajes = async () => {
-  return await repository.obtenerMensajes();
+  return await mensajeRepository.obtenerMensajes();
 };
 
-// obtiene un mensaje por id
 const obtenerMensajePorId = async (id) => {
-  return await repository.obtenerMensajePorId(id);
+  return await mensajeRepository.obtenerMensajePorId(id);
 };
 
-// crea un nuevo mensaje
 const crearMensaje = async (datos) => {
-  const emailService = require('../services/email.service');
-
-  // intentamos enviar el correo
-  const correoEnviado = await emailService.enviarCorreo(datos.destinatario, datos.asunto, datos.mensaje);
-
-  // si falla, lanzamos un error y detenemos el flujo
-  if (!correoEnviado) {
-    const error = new Error('No se pudo enviar el correo al servidor SMTP');
-    error.status = 500;
-    throw error;
+  try {
+    await emailService.enviarCorreo({
+      destinatario: datos.destinatario,
+      asunto: datos.asunto,
+      mensaje: datos.mensaje
+    });
+  } catch (error) {
+    const smtpError = new Error('Error al enviar correo');
+    smtpError.status = 502;
+    throw smtpError;
   }
-  // si se envio el correo entonces guardamos el mensaje
-  return await repository.crearMensaje(datos);
+
+  return await mensajeRepository.crearMensaje(datos);
 };
 
-// actualiza un mensaje
 const actualizarMensaje = async (id, datos) => {
-  const mensaje = await repository.obtenerMensajePorId(id);
+  const mensaje = await mensajeRepository.obtenerMensajePorId(id);
+
   if (!mensaje) {
     return null;
   }
-  return await repository.actualizarMensaje(mensaje, datos);
+
+  return await mensajeRepository.actualizarMensaje(mensaje, datos);
+};
+
+const eliminarMensaje = async () => {
+  const error = new Error('No está permitido eliminar mensajes');
+  error.status = 405;
+  throw error;
 };
 
 module.exports = {
   obtenerMensajes,
   obtenerMensajePorId,
   crearMensaje,
-  actualizarMensaje
+  actualizarMensaje,
+  eliminarMensaje
 };

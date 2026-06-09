@@ -1,63 +1,110 @@
-const service = require('../services/mensaje.service');
-const schema = require('../validations/mensaje.validation');
+const mensajeService = require('../services/mensaje.service');
+const mensajeSchema = require('../validations/mensaje.validation');
 
-// obtiene todos los mensajes
 const obtenerMensajes = async (req, res) => {
   try {
-    const datos = await service.obtenerMensajes();
-    res.json(datos);
+    const mensajes = await mensajeService.obtenerMensajes();
+
+    res.json(mensajes);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener mensajes' });
+    res.status(500).json({
+      error: 'Error al obtener mensajes'
+    });
   }
 };
 
-// obtiene un mensaje por id
 const obtenerMensajePorId = async (req, res) => {
   try {
-    const { id } = req.params;
-    const datos = await service.obtenerMensajePorId(id);
-    if (!datos) {
-      return res.status(404).json({ error: 'Mensaje no encontrado' });
+    const mensaje = await mensajeService.obtenerMensajePorId(req.params.id);
+
+    if (!mensaje) {
+      return res.status(404).json({
+        error: 'Mensaje no encontrado'
+      });
     }
-    res.json(datos);
+
+    res.json(mensaje);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el mensaje' });
+    res.status(500).json({
+      error: 'Error al obtener mensaje'
+    });
   }
 };
 
-// crea un nuevo mensaje
 const crearMensaje = async (req, res) => {
-  try {
-    const datos = schema.parse(req.body);
-    const nuevoMensaje = await service.crearMensaje(datos);
-    res.status(201).json(nuevoMensaje);
-  } catch (error) {
-    console.error("Error capturado en crearMensaje:", error);
-    res.status(400).json({ error: error.errors || 'Error al crear el mensaje' });
-  }
-};
+  let datos;
 
-// actualiza un mensaje
-const actualizarMensaje = async (req, res) => {
   try {
-    const { id } = req.params;
-    const datos = schema.parse(req.body);
-    const mensajeActualizado = await service.actualizarMensaje(id, datos);
-    if (!mensajeActualizado) {
-      return res.status(404).json({ error: 'Mensaje no encontrado' });
+    datos = mensajeSchema.parse(req.body);
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Datos inválidos'
+    });
+  }
+
+  try {
+    const mensaje = await mensajeService.crearMensaje(datos);
+
+    res.status(201).json(mensaje);
+  } catch (error) {
+    if (error.status === 502) {
+      return res.status(502).json({
+        error: error.message
+      });
     }
-    res.json(mensajeActualizado);
-  } catch (error) {
-    res.status(400).json({ error: error.errors || 'Error al actualizar el mensaje' });
+
+    res.status(500).json({
+      error: 'Error al crear mensaje'
+    });
   }
 };
 
-// bloquea eliminación de mensaje
-const eliminarMensaje = (req, res) => {
-  //si no se puede eliminar se responde 405
-  res.status(405).json({
-    error: 'No está permitido eliminar este recurso (historial inmutable)'
-  });
+const actualizarMensaje = async (req, res) => {
+  let datos;
+
+  try {
+    datos = mensajeSchema.parse(req.body);
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Datos inválidos'
+    });
+  }
+
+  try {
+    const mensaje = await mensajeService.actualizarMensaje(req.params.id, datos);
+
+    if (!mensaje) {
+      return res.status(404).json({
+        error: 'Mensaje no encontrado'
+      });
+    }
+
+    res.json(mensaje);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Error al actualizar mensaje'
+    });
+  }
+};
+
+const eliminarMensaje = async (req, res) => {
+  try {
+    await mensajeService.eliminarMensaje();
+
+    res.json({
+      mensaje: 'Mensaje eliminado correctamente'
+    });
+  } catch (error) {
+    if (error.status === 405) {
+      return res.status(405).json({
+        error: error.message
+      });
+    }
+
+    res.status(500).json({
+      error: 'Error al eliminar mensaje'
+    });
+  }
 };
 
 module.exports = {
