@@ -4,7 +4,7 @@ const healthRoutes = require('./routes/health'); // importa las rutas de health
 const asistenciasRoutes = require('./routes/asistencias'); // importa las rutas de asistencias
 const justificativosRoutes = require('./routes/justificativos'); // importa las rutas de justificativos
 const anotacionesRoutes = require('./routes/anotaciones'); // importa las rutas de anotaciones
-const mensajeRoutes = require('./routes/mensaje'); // importa las rutas de mensajes
+const mensajesRoutes = require('./routes/mensajes'); // importa las rutas de mensajes
 
 dotenv.config(); // carga las variables de entorno del .env
 
@@ -16,7 +16,7 @@ app.use('/', healthRoutes);
 app.use('/api/asistencias', asistenciasRoutes);
 app.use('/api/justificativos', justificativosRoutes);
 app.use('/api/anotaciones', anotacionesRoutes);
-app.use('/api/mensaje', mensajeRoutes);
+app.use('/api/mensajes', mensajesRoutes);
 
 const PORT = process.env.PORT || 3000; // usa el puerto del .env o 3000 por defecto
 app.listen(PORT, () => {
