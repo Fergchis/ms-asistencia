@@ -1,6 +1,7 @@
 const mensajeService = require('../services/mensaje.service');
 const mensajeSchema = require('../validations/mensaje.validation');
 
+// obtiene todos los mensajes
 const obtenerMensajes = async (req, res) => {
   try {
     const mensajes = await mensajeService.obtenerMensajes();
@@ -13,6 +14,7 @@ const obtenerMensajes = async (req, res) => {
   }
 };
 
+// obtiene un mensaje por id
 const obtenerMensajePorId = async (req, res) => {
   try {
     const mensaje = await mensajeService.obtenerMensajePorId(req.params.id);
@@ -31,6 +33,7 @@ const obtenerMensajePorId = async (req, res) => {
   }
 };
 
+// crea un nuevo mensaje
 const crearMensaje = async (req, res) => {
   let datos;
 
@@ -59,6 +62,7 @@ const crearMensaje = async (req, res) => {
   }
 };
 
+// actualiza un mensaje
 const actualizarMensaje = async (req, res) => {
   let datos;
 
@@ -87,6 +91,7 @@ const actualizarMensaje = async (req, res) => {
   }
 };
 
+// bloquea eliminación de mensaje
 const eliminarMensaje = async (req, res) => {
   try {
     await mensajeService.eliminarMensaje();
