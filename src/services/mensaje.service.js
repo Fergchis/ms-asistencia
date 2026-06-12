@@ -10,6 +10,8 @@ const obtenerMensajePorId = async (id) => {
 };
 
 const crearMensaje = async (datos) => {
+  const mensajeCreado = await mensajeRepository.crearMensaje(datos);
+
   try {
     await emailService.enviarCorreo({
       destinatario: datos.destinatario,
@@ -17,12 +19,16 @@ const crearMensaje = async (datos) => {
       mensaje: datos.mensaje
     });
   } catch (error) {
-    const smtpError = new Error('Error al enviar correo');
-    smtpError.status = 502;
-    throw smtpError;
+    console.error('No se pudo enviar correo, pero el mensaje fue guardado:', {
+      mensajeId: mensajeCreado.id,
+      destinatario: datos.destinatario,
+      code: error.code,
+      command: error.command,
+      message: error.message
+    });
   }
 
-  return await mensajeRepository.crearMensaje(datos);
+  return mensajeCreado;
 };
 
 const actualizarMensaje = async (id, datos) => {
