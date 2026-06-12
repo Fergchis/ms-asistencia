@@ -2,6 +2,10 @@ const request = require('supertest');
 const app = require('../src/app');
 const sequelize = require('../src/config/db');
 
+jest.mock('../src/services/email.service', () => ({
+  enviarCorreo: jest.fn().mockResolvedValue()
+}));
+
 describe('MS Asistencia - endpoints base', () => {
   test('GET /health debe responder 200', async () => {
     const response = await request(app).get('/health');
@@ -106,6 +110,42 @@ describe('POST /api/anotaciones', () => {
       alumnoId: 1,
       profesorId: 1,
       tipo: 'INVALIDA'
+    });
+
+    expect(response.statusCode).toBe(400);
+  });
+});
+
+describe('MS Asistencia - mensajería', () => {
+  test('GET /api/mensaje debe responder 200', async () => {
+    const response = await request(app).get('/api/mensaje');
+
+    expect(response.statusCode).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  test('POST /api/mensaje debe crear un mensaje', async () => {
+    const response = await request(app).post('/api/mensaje').send({
+      alumnoId: 1,
+      profesorId: 1,
+      destinatario: 'correo.prueba@example.com',
+      asunto: 'Prueba mensajeria desde test',
+      mensaje: 'Mensaje creado desde prueba automatizada',
+      tipo: 'COMUNICACION'
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.body).toHaveProperty('id');
+  });
+
+  test('POST /api/mensaje debe rechazar datos inválidos', async () => {
+    const response = await request(app).post('/api/mensaje').send({
+      alumnoId: 'abc',
+      profesorId: 1,
+      destinatario: 'correo-invalido',
+      asunto: '',
+      mensaje: '',
+      tipo: 'INVALIDO'
     });
 
     expect(response.statusCode).toBe(400);
