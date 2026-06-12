@@ -14,6 +14,6 @@ app.use('/', healthRoutes);
 app.use('/api/asistencias', asistenciasRoutes);
 app.use('/api/justificativos', justificativosRoutes);
 app.use('/api/anotaciones', anotacionesRoutes);
-app.use('/api/mensajes', mensajesRoutes);
+app.use('/api/mensaje', mensajesRoutes);
 
 module.exports = app;
