@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// Usamos Gmail para envío de correos reales
 const enviarCorreo = async ({ destinatario, asunto, mensaje }) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -12,13 +11,34 @@ const enviarCorreo = async ({ destinatario, asunto, mensaje }) => {
     }
   });
 
-  // exportamos para enviar los correos
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM,
-    to: destinatario,
-    subject: asunto,
-    text: mensaje
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: destinatario,
+      subject: asunto,
+      text: mensaje
+    });
+
+    console.log('Correo enviado:', {
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error SMTP al enviar correo:', {
+      code: error.code,
+      command: error.command,
+      responseCode: error.responseCode,
+      response: error.response,
+      message: error.message,
+      destinatario
+    });
+
+    throw error;
+  }
 };
 
 module.exports = {
